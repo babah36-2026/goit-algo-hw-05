@@ -43,11 +43,34 @@ def display_log_counts(counts: dict):
     for level, count in counts.items():
         print(f"{level:<17}| {count}")
 
+if len(sys.argv) < 2:
+    print("Вкажіть шлях до лог-файлу.")
+    sys.exit()
+
 file_path = sys.argv[1]
 
-logs = load_logs(file_path)
+try:
+    logs = load_logs(file_path)
+
+except FileNotFoundError:
+    print("Файл не знайдено.")
+    sys.exit()
+
+except ValueError:
+    print("Помилка в структурі log-файлу.")
+    sys.exit()
+
 counts = count_logs_by_level(logs)
 display_log_counts(counts)
+
+if len(sys.argv) > 2:
+    level = sys.argv[2]
+    filtered_logs = filter_logs_by_level(logs, level)
+
+    print(f"\nДеталі логів для рівня '{level.upper()}':")
+
+    for log in filtered_logs:
+        print(f'{log["date"]} {log["time"]} - {log["message"]}')
 
 
 
